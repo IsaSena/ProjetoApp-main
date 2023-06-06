@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, View } from 'react-native'
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import { 
     Container,
@@ -19,10 +19,16 @@ import {
     ButtonWrapper
 } from './styles';
 import { Button } from '../../components/Button';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export function Details(){
     const [ modalVisible, setModalVisible ] = useState(false);
     
+    const route = useRoute();
+    const selectedEvent = route.params?.selectedEvent; //pega o item evento do dashboard
+    // const [ evento, setEvento ] = useState([]);
+    console.log(selectedEvent);
+
     const navigation = useNavigation<any>();
 
     const handlePress = () =>{
@@ -33,7 +39,7 @@ export function Details(){
         setModalVisible(false);
     };
 
-    function handleEdit(){
+    async function handleEdit(){
         navigation.navigate('Novo');
     }
 
@@ -87,22 +93,22 @@ export function Details(){
                     <EventDetailsWrapper>
 
                         <EventDate>
-                            <Text>Data: 06/06/2023</Text>
+                            <Text>Data :</Text>
                         </EventDate>
 
                         <EventStart>
-                            <Text>Início: 08:00</Text>
+                            <Text>Início: </Text>
                         </EventStart>
 
                         <EventEnd>
-                            <Text>Fim: 22:00</Text>
+                            <Text>Fim: </Text>
                         </EventEnd>
 
                     </EventDetailsWrapper>
                 </SecondWrapper>
 
                 <EventDetails>
-                    <Text>Evento de doação de roupas para pessoas necessitadas.</Text>
+                    <Text></Text>
                 </EventDetails>
             </EventWrapper>
 

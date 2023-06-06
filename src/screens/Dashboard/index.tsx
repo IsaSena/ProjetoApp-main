@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { ScrollView, TouchableOpacity } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { 
     Container,
@@ -16,34 +17,52 @@ import {
     EventStartHour,
     EventDetails
 } from './styles';
+
 import { Input } from '../../components/Input';
 
-import { Register } from '../Register';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { api} from '../../services/api';
+import { EventDTO } from '../../dtos/EventDTO'
 
 export function Dashboard(){
-    const [ evento, setEvento ] = useState([]);
+    const [ evento, setEvento ] = useState<EventDTO[]>([]);
+    const [ loading, setLoading ] = useState(true);
+    const navigation = useNavigation<any>();
 
-    const route = useRoute();
-    const listEvent = route.params?.listEvent; //faz com que receba os parâmetros
+    // const route = useRoute();
+    // const listEvent = route.params?.listEvent; //faz com que receba os parâmetros
 
-    // useEffect(() => {
-    //     listEvent.getItem().then(evento => setEvento(evento));
-    // }, [route]); //vai disparar toda vez que a rota for ativada
+//busca no async  e atualiza os eventos
+    // useEffect(() =>{
+    //     getEvents().then(evento => setEvento(evento));
+    // }, [route]); //vai disparar toda vez que a rota for ativada e seta o evento
+
+    // //pega todos os itens do asyncStorage e retorna em um array por uma promise
+    // function getEvents(){
+    //     return AsyncStorage.getItem('items')
+    //         .then(response =>{
+    //             if (response)
+    //                 return Promise.resolve(JSON.parse(response))
+    //             else
+    //                 return Promise.resolve([])
+    //         });
+    // }
 
     useEffect(() =>{
-        getEvents().then(evento => setEvento(evento));
-    }, [route]); //vai disparar toda vez que a rota for ativada
+        async function fetchEvents(){
+            try{
+                const resposta = await api.get('/eventos');
+                setEvento(resposta.data);
+            }catch (error){
+                console.log(error);
+            }finally{
+                setLoading(false);
+            }
+        }
+        fetchEvents();
+    },[]);
 
-    //pega todos os itens do asyncStorage e retorna em um array por uma promise
-    function getEvents(){
-        return AsyncStorage.getItem('items')
-            .then(response =>{
-                if (response)
-                    return Promise.resolve(JSON.parse(response))
-                else
-                    return Promise.resolve([])
-            });
+    function handleEventDetails(){
+        navigation.navigate('Detalhes');
     }
 
     return (
@@ -55,13 +74,17 @@ export function Dashboard(){
             <Input 
             placeholder='procurar um input de pesquisa'
             />
-
-            <ScrollView>
-                {
-                evento.length > 0 ? (  
-                evento.map((item) => (
+            <ScrollView
+            >
+            {
+                evento.map((evento) => (
+                <TouchableOpacity
+                onPress={() => handleEventDetails()}
+                >
                 
-                <EventWrapper key={item.id}>
+                <EventWrapper 
+                    key={evento.idevento}
+                >
                     <Img>
                         <Text>Imagem</Text>
                     </Img>
@@ -69,34 +92,32 @@ export function Dashboard(){
                     <EventContentWrapper>
 
                         <EventName>
-                            <Text>{item.eventName}</Text>
+                            <Text>{evento.evento}</Text>
                         </EventName>
 
                         <DHWrapper>
 
                             <EventDate> 
-                                <Text>{item.eventDate}</Text>
+                                <Text>{evento.data}</Text>
                             </EventDate>
 
                             <EventStartHour>
-                                <Text>{item.eventStart}</Text>
+                                <Text>{evento.hora_inicio}</Text>
                             </EventStartHour>
 
                         </DHWrapper>
 
                         <EventDetails>
-                            <Text>{item.eventDescription}</Text>
+                            <Text>{evento.detalhe}</Text>
                         </EventDetails>
 
                     </EventContentWrapper>
 
                 </EventWrapper>
-
+                </TouchableOpacity>
                 ))
-            ) : (
-                    <Text>Nenhum evento encontrado!</Text>
-                )
             }
+
             </ScrollView>
         </Container>
     );

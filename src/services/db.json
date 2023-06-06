@@ -1,0 +1,38 @@
+{
+    "eventos" : [
+        {
+
+        "idevento":"1",
+
+        "evento":"Feijoada Beneficente",
+
+        "data":"2023-06-06",
+
+        "hora_inicio":"11:00",
+
+        "hora_fim":"15:00",
+
+        "detalhe": "Feijoada beneficente para ajudar a casa de apoio da Graça",
+
+        "imagem": "http://localhost:3000/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb55.png"
+
+        },
+        {
+
+            "idevento":"2",
+    
+            "evento":"Doação",
+    
+            "data":"2023-06-06",
+    
+            "hora_inicio":"11:00",
+    
+            "hora_fim":"15:00",
+    
+            "detalhe": "Doação de roupas",
+    
+            "imagem": "http://localhost:3000/9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb55.png"
+    
+            }
+    ]
+}

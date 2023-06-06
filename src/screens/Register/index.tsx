@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -25,29 +25,31 @@ export function Register(){
     const [ eventDescription, setEventDescription ] = useState('');
     const [ eventImg, setEventImg ] = useState('');
 
+    
+
     const navigation = useNavigation<any>();
 
-    function handleChangeName(eventName){
+    function handleChangeName(eventName : string){
         setEventName(eventName);
     }
 
-    function handleChangeDate(eventDate){
+    function handleChangeDate(eventDate : string){
         setEventDate(eventDate);
     }
 
-    function handleChangeStart(eventStart){
+    function handleChangeStart(eventStart : string){
         setEventStart(eventStart);
     }
 
-    function handleChangeEnd(eventEnd){
+    function handleChangeEnd(eventEnd : string){
         setEventEnd(eventEnd);
     }
 
-    function handleChangeDescription(eventDescription){
+    function handleChangeDescription(eventDescription : string){
         setEventDescription(eventDescription);
     }
 
-    function handleChangeImg(eventImg){
+    function handleChangeImg(eventImg : string){
         setEventImg(eventImg);
     }
 
@@ -63,10 +65,6 @@ export function Register(){
             await AsyncStorage.setItem('items', JSON.stringify(savedEvent));
             navigation.navigate('Eventos', listEvent);
             console.log(listEvent);
-            
-
-            //console.log(eventName, eventDate, eventStart, eventEnd, eventDescription, eventImg);
-            //navigation.navigate('Eventos')
         } catch (error) {
             console.log(error);
             Alert.alert('Não foi possível salvar!')

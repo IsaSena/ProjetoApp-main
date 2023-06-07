@@ -7,7 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "api": "json-server ./src/services/db.json --host 192.168.200.124 --port 3333 --delay 700"
+    "api": "json-server ./src/services/db.json --host 172.18.0.128 --port 3333 --delay 700"
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.18.1",
@@ -24,7 +24,8 @@
     "react-native-safe-area-context": "4.5.0",
     "react-native-screens": "~3.20.0",
     "styled-components": "^6.0.0-rc.3",
-    "typescript": "^4.9.4"
+    "typescript": "^4.9.4",
+    "yup": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"

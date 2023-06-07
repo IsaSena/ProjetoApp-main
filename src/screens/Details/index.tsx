@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal, View } from 'react-native'
+import { Alert, Modal, View } from 'react-native'
 
 import { useNavigation, useRoute } from '@react-navigation/native';
 
@@ -20,41 +20,48 @@ import {
 } from './styles';
 import { Button } from '../../components/Button';
 import { EventDTO } from '../../dtos/EventDTO';
-
-interface Params{
-    evento : EventDTO;
-}
+import { api } from '../../services/api';
+ interface Params{
+      evento : EventDTO;
+  }
 
 export function Details(){
-    const [ modalVisible, setModalVisible ] = useState(false);
+     const [ modalVisible, setModalVisible ] = useState(false);//ok
     
-    const route = useRoute();
-    const { evento } = route.params as Params; 
-    // // const [ evento, setEvento ] = useState([]);
+  const route = useRoute();
+  const { evento } = route.params as Params || {}; 
+    //  const [ evento, setEvento ] = useState([]);
     // console.log(selectedEvent);
 
-    const navigation = useNavigation<any>();
+ const navigation = useNavigation<any>();
 
     const handlePress = () =>{
-        setModalVisible(true);
+     setModalVisible(true);
     };
 
-    const closeModal = () => {
-        setModalVisible(false);
-    };
+     const closeModal = () => {
+         setModalVisible(false);
+     };
 
-    //manda o evento pra editar
-    function handleEdit(){
-        navigation.navigate('Novo');
-    }
+    // //manda o evento pra editar
+ function handleEdit(){
+     navigation.navigate('Novo');
+ }
 
-    function handleConfirmRemove(){
+    async function handleConfirmRemove(id){
+        try{
+            await api.delete(`/eventos/${id}`);
+            setModalVisible(false);
+        }catch(error){
+            console.log(error);
+            Alert.alert("Não foi possível deletar o evento!")
+        }
         navigation.navigate('Eventos');
     }
 
     return (
         <Container>
-            <Header>
+             <Header>
                 <TextHeader>{evento.evento}</TextHeader>
             </Header>
 
@@ -81,7 +88,7 @@ export function Details(){
                                     <Button 
                                     title='Confirmar'
                                     type='salvarConfirmar'
-                                    onPress={handleConfirmRemove}
+                                    onPress={() => handleConfirmRemove(evento.id)}
                                     />
 
                                     <Button 

@@ -2,6 +2,8 @@ import React, { useState } from "react";
 
 import { useNavigation, useRoute } from '@react-navigation/native';
 
+import * as Yup from 'yup';
+
 import {
     Container,
     Header,
@@ -22,72 +24,80 @@ import { api } from "../../services/api";
 // }
 
 export function Register(){
-    const [ eventName, setEventName ] = useState('');
-    const [ eventDate, setEventDate ] = useState('');
-    const [ eventStart, setEventStart ] = useState('');
-    const [ eventEnd, setEventEnd ] = useState('');
-    const [ eventDescription, setEventDescription ] = useState('');
-    const [ eventImg, setEventImg ] = useState('');
-
+    const [ evento, setEvento ] = useState('');
+    const [ data, setData ] = useState('');
+    const [ hora_inicio, setHora_Inicio ] = useState('');
+    const [ hora_fim, setHora_Fim ] = useState('');
+    const [ detalhe, setDetalhe ] = useState('');
+    const [ imagem, setImagem ] = useState('');
+    var id = Number;
     // const route = useRoute();
     // const { evento } = route.params as Params;
 
+    const schema = Yup.object().shape({
+        evento: Yup.string().required('O nome do evento é obrigatório!'),
+        data: Yup.string().required('A data do evento é obrigatória!'),
+        hora_inicio: Yup.string().required('O horário de início do evento é obrigatório!'),
+        hora_fim: Yup.string().required('O horário do fim do evento é obrigatório'),
+        detalhe: Yup.string().required('A descrição do evento é obrigatória!')
+    })
+
+    // const{
+    //     control, /*registra os inputs*/
+    //     handleSubmit, /*pega os valores de todos os inputs e envia 1 vez só*/
+    //     reset,
+    //     formState:{ errors }
+    // } = useForm({
+    //     resolver : yupResolver(schema)/*faz com que o form siga um padrao criado*/
+    // })
+
     const navigation = useNavigation<any>();
 
-    function handleChangeName(eventName : string){
-        setEventName(eventName);
+    function handleChangeName(evento : string){
+        setEvento(evento);
     }
 
-    function handleChangeDate(eventDate : string){
-        setEventDate(eventDate);
+    function handleChangeDate(data : string){
+        setData(data);
     }
 
-    function handleChangeStart(eventStart : string){
-        setEventStart(eventStart);
+    function handleChangeStart(hora_inicio : string){
+        setHora_Inicio(hora_inicio);
     }
 
-    function handleChangeEnd(eventEnd : string){
-        setEventEnd(eventEnd);
+    function handleChangeEnd(hora_fim : string){
+        setHora_Fim(hora_fim);
     }
 
-    function handleChangeDescription(eventDescription : string){
-        setEventDescription(eventDescription);
+    function handleChangeDescription(detalhe : string){
+        setDetalhe(detalhe);
     }
 
-    function handleChangeImg(eventImg : string){
-        setEventImg(eventImg);
+    function handleChangeImg(imagem : string){
+        setImagem(imagem);
     }
 
     const completeEvent = {
-             eventName,
-             eventDate,
-             eventStart,
-             eventEnd,
-             eventDescription,
-             eventImg
-             };
+        id,
+        evento,
+        data,
+        hora_inicio,
+        hora_fim,
+        detalhe,
+        imagem
+    };
 
 
     async function handleSave(){
-        
-        let notification = JSON.stringify({
-            token: 1
-        })
-
-let res = null;
-try {
-    const c = await api.get('/eventos');
-    console.log(c.data);
-    res = await api.post('/eventos', c.data);
-} catch (e) {
-    console.error(res);
-} finally {
-    //navigation.navigate('Eventos');
-}
-
-        
-        
-
+        try {
+            await api.post('/eventos', completeEvent);
+            console.log(completeEvent);
+        } catch (e) {
+            console.error(e);
+            Alert.alert('Não foi possível salvar!')
+        } finally {
+            navigation.navigate('Eventos');
+        }
     }
 
     // async function handleSave(){

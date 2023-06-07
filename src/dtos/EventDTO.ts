@@ -1,5 +1,5 @@
 export interface EventDTO {
-    idevento: string,
+    id: Number,
     evento: string,
     data: string,
     hora_inicio: string,

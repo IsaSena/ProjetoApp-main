@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 
 import { 
     Container,
@@ -24,25 +24,31 @@ import { EventDTO } from '../../dtos/EventDTO'
 
 export function Dashboard(){
     const [ evento, setEvento ] = useState<EventDTO[]>([]);
-    const [ loading, setLoading ] = useState(true);
+
     const navigation = useNavigation<any>();
 
-    useEffect(() =>{
+//    useEffect(() =>{
         async function fetchEvents(){
             try{
                 const resposta = await api.get('/eventos');
                 setEvento(resposta.data);
             }catch (error){
                 console.log(error);
-            }finally{
-                setLoading(false);
             }
         }
-        fetchEvents();
-    },[]);
+     //   fetchEvents();
+    //},[]);
 
-    //passa pra rota o evento
-    function handleEventDetails(evento : EventDTO ){
+     useEffect(() =>{
+         fetchEvents();
+     },[]);
+
+     useFocusEffect(useCallback(()=> {
+         fetchEvents();
+     },[]));
+
+    //passa pra rota o evento //ok
+    function handleEventDetails(evento : EventDTO ){ 
         navigation.navigate('Detalhes', { evento });
     }
 
@@ -64,7 +70,7 @@ export function Dashboard(){
                 >
                 
                 <EventWrapper 
-                    key={evento.idevento}
+                    key={evento.id}
                 >
                     <Img>
                         <Text>Imagem</Text>

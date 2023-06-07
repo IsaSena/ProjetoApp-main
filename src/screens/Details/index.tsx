@@ -19,15 +19,19 @@ import {
     ButtonWrapper
 } from './styles';
 import { Button } from '../../components/Button';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { EventDTO } from '../../dtos/EventDTO';
+
+interface Params{
+    evento : EventDTO;
+}
 
 export function Details(){
     const [ modalVisible, setModalVisible ] = useState(false);
     
     const route = useRoute();
-    const selectedEvent = route.params?.selectedEvent; //pega o item evento do dashboard
-    // const [ evento, setEvento ] = useState([]);
-    console.log(selectedEvent);
+    const { evento } = route.params as Params; 
+    // // const [ evento, setEvento ] = useState([]);
+    // console.log(selectedEvent);
 
     const navigation = useNavigation<any>();
 
@@ -39,7 +43,8 @@ export function Details(){
         setModalVisible(false);
     };
 
-    async function handleEdit(){
+    //manda o evento pra editar
+    function handleEdit(){
         navigation.navigate('Novo');
     }
 
@@ -50,13 +55,13 @@ export function Details(){
     return (
         <Container>
             <Header>
-                <TextHeader>Doação</TextHeader>
+                <TextHeader>{evento.evento}</TextHeader>
             </Header>
 
             <EventWrapper>
                 <SecondWrapper>
                     <Img>
-                        <Text>Imagem</Text>
+                        <Text>{evento.imagem}</Text>
                     </Img>
 
                     <Modal 
@@ -93,22 +98,22 @@ export function Details(){
                     <EventDetailsWrapper>
 
                         <EventDate>
-                            <Text>Data :</Text>
+                            <Text>Data : {evento.data}</Text>
                         </EventDate>
 
                         <EventStart>
-                            <Text>Início: </Text>
+                            <Text>Início: {evento.hora_inicio}</Text>
                         </EventStart>
 
                         <EventEnd>
-                            <Text>Fim: </Text>
+                            <Text>Fim: {evento.hora_fim}</Text>
                         </EventEnd>
 
                     </EventDetailsWrapper>
                 </SecondWrapper>
 
                 <EventDetails>
-                    <Text></Text>
+                    <Text>{evento.detalhe}</Text>
                 </EventDetails>
             </EventWrapper>
 

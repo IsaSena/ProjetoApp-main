@@ -2,8 +2,6 @@ import React, { useState } from "react";
 
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import {
     Container,
     Header,
@@ -16,6 +14,12 @@ import {
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
 import { Alert } from "react-native";
+import { EventDTO } from "../../dtos/EventDTO";
+import { api } from "../../services/api";
+
+// interface Params{
+//     evento : EventDTO;
+// }
 
 export function Register(){
     const [ eventName, setEventName ] = useState('');
@@ -25,7 +29,8 @@ export function Register(){
     const [ eventDescription, setEventDescription ] = useState('');
     const [ eventImg, setEventImg ] = useState('');
 
-    
+    // const route = useRoute();
+    // const { evento } = route.params as Params;
 
     const navigation = useNavigation<any>();
 
@@ -53,32 +58,57 @@ export function Register(){
         setEventImg(eventImg);
     }
 
-    async function handleSave(){
-        try{
-            const listEvent = {id: new Date().getTime(), eventName, eventDate, eventStart, eventEnd, eventDescription, eventImg};
-            let savedEvent = [];
-            const response = await AsyncStorage.getItem('items');
-            
-            if (response) savedEvent = JSON.parse(response);
-            savedEvent.push(listEvent);
-            
-            await AsyncStorage.setItem('items', JSON.stringify(savedEvent));
-            navigation.navigate('Eventos', listEvent);
-            console.log(listEvent);
-        } catch (error) {
-            console.log(error);
-            Alert.alert('Não foi possível salvar!')
-        }
-    };
+    const completeEvent = {
+             eventName,
+             eventDate,
+             eventStart,
+             eventEnd,
+             eventDescription,
+             eventImg
+             };
 
-    // async function saveData(eventName, eventDate, eventStart, eventEnd, eventDescription, eventImg) {
-    //     try {
-    //       await AsyncStorage.setItem(eventName, eventDate, eventStart, eventEnd, eventDescription, eventImg);
-    //       console.log('Valor salvo com sucesso.');
-    //     } catch (error) {
-    //       console.log('Erro ao salvar o valor:', error);
+
+    async function handleSave(){
+        
+        let notification = JSON.stringify({
+            token: 1
+        })
+
+let res = null;
+try {
+    const c = await api.get('/eventos');
+    console.log(c.data);
+    res = await api.post('/eventos', c.data);
+} catch (e) {
+    console.error(res);
+} finally {
+    //navigation.navigate('Eventos');
+}
+
+        
+        
+
+    }
+
+    // async function handleSave(){
+    //     try{
+    //         const completeEvent = {
+    //             id : 'string',
+    //             eventName,
+    //             eventDate,
+    //             eventStart,
+    //             eventEnd,
+    //             eventDescription,
+    //             eventImg
+    //         };
+    //         const resposta = await api.post('/eventos', completeEvent);
+    //         console.log(resposta.data);
+    //         navigation.navigate('Eventos');
+    //     }catch(error){
+    //         console.log(error);
+    //         Alert.alert('Não foi possível salvar!')
     //     }
-    //   }
+    // }
 
     return (
         <Container>

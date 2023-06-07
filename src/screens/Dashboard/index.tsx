@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollView, TouchableOpacity } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { 
     Container,
@@ -28,25 +27,6 @@ export function Dashboard(){
     const [ loading, setLoading ] = useState(true);
     const navigation = useNavigation<any>();
 
-    // const route = useRoute();
-    // const listEvent = route.params?.listEvent; //faz com que receba os parâmetros
-
-//busca no async  e atualiza os eventos
-    // useEffect(() =>{
-    //     getEvents().then(evento => setEvento(evento));
-    // }, [route]); //vai disparar toda vez que a rota for ativada e seta o evento
-
-    // //pega todos os itens do asyncStorage e retorna em um array por uma promise
-    // function getEvents(){
-    //     return AsyncStorage.getItem('items')
-    //         .then(response =>{
-    //             if (response)
-    //                 return Promise.resolve(JSON.parse(response))
-    //             else
-    //                 return Promise.resolve([])
-    //         });
-    // }
-
     useEffect(() =>{
         async function fetchEvents(){
             try{
@@ -61,8 +41,9 @@ export function Dashboard(){
         fetchEvents();
     },[]);
 
-    function handleEventDetails(){
-        navigation.navigate('Detalhes');
+    //passa pra rota o evento
+    function handleEventDetails(evento : EventDTO ){
+        navigation.navigate('Detalhes', { evento });
     }
 
     return (
@@ -79,7 +60,7 @@ export function Dashboard(){
             {
                 evento.map((evento) => (
                 <TouchableOpacity
-                onPress={() => handleEventDetails()}
+                onPress={() => handleEventDetails(evento)}
                 >
                 
                 <EventWrapper 

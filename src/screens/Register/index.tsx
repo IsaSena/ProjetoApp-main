@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { Alert, TouchableWithoutFeedback, Keyboard } from "react-native";
 
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { format } from 'date-fns';
+import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup'
 
-import * as Yup from 'yup';
 
 import {
     Container,
@@ -15,158 +18,140 @@ import {
 
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
-import { Alert } from "react-native";
 import { EventDTO } from "../../dtos/EventDTO";
 import { api } from "../../services/api";
+import moment from "moment";
+import { InputForm } from "../../components/InputForm";
 
-// interface Params{
-//     evento : EventDTO;
-// }
+interface Params{
+    evento : EventDTO;
+}
 
 export function Register(){
-    const [ evento, setEvento ] = useState('');
+    const route = useRoute();
+    const { evento } = route.params as Params || {};
+
+    const [ e, setEvento ] = useState('');
     const [ data, setData ] = useState('');
     const [ hora_inicio, setHora_Inicio ] = useState('');
     const [ hora_fim, setHora_Fim ] = useState('');
     const [ detalhe, setDetalhe ] = useState('');
     const [ imagem, setImagem ] = useState('');
-    var id = Number;
-    // const route = useRoute();
-    // const { evento } = route.params as Params;
-
-    const schema = Yup.object().shape({
-        evento: Yup.string().required('O nome do evento é obrigatório!'),
-        data: Yup.string().required('A data do evento é obrigatória!'),
-        hora_inicio: Yup.string().required('O horário de início do evento é obrigatório!'),
-        hora_fim: Yup.string().required('O horário do fim do evento é obrigatório'),
-        detalhe: Yup.string().required('A descrição do evento é obrigatória!')
-    })
-
-    // const{
-    //     control, /*registra os inputs*/
-    //     handleSubmit, /*pega os valores de todos os inputs e envia 1 vez só*/
-    //     reset,
-    //     formState:{ errors }
-    // } = useForm({
-    //     resolver : yupResolver(schema)/*faz com que o form siga um padrao criado*/
-    // })
 
     const navigation = useNavigation<any>();
 
-    function handleChangeName(evento : string){
-        setEvento(evento);
-    }
-
-    function handleChangeDate(data : string){
-        setData(data);
-    }
-
-    function handleChangeStart(hora_inicio : string){
-        setHora_Inicio(hora_inicio);
-    }
-
-    function handleChangeEnd(hora_fim : string){
-        setHora_Fim(hora_fim);
-    }
-
-    function handleChangeDescription(detalhe : string){
-        setDetalhe(detalhe);
-    }
-
-    function handleChangeImg(imagem : string){
-        setImagem(imagem);
-    }
-
-    const completeEvent = {
-        id,
-        evento,
-        data,
-        hora_inicio,
-        hora_fim,
-        detalhe,
-        imagem
-    };
-
-
     async function handleSave(){
-        try {
-            await api.post('/eventos', completeEvent);
-            console.log(completeEvent);
-        } catch (e) {
-            console.error(e);
-            Alert.alert('Não foi possível salvar!')
-        } finally {
+
+        if(e == ''){
+            Alert.alert('O nome do evento é obrigatório!')
+        }else if(data == ''){
+            Alert.alert('A data do evento é obrigatória!')
+        }else if(moment(data, 'MM/DD/YYYY',true).isValid() == false){
+            Alert.alert('Data invalida')
+        }else if(hora_inicio == ''){
+            Alert.alert('O horário de início é obrigatório!')
+            
+        }else if(moment(hora_inicio, 'HH:mm',true).isValid() == false){
+            Alert.alert('Hora de início inválida!')
+        }else if (hora_fim == ''){
+            Alert.alert('O horário de fim é obrigatório!')
+        }else if(moment(hora_fim, 'HH:mm',true).isValid() == false){
+            Alert.alert('Hora de fim inválida!')
+        }else if (detalhe == ''){
+            Alert.alert('Os detalhes do evento é obrigatório!')
+        } else if (evento != null) {
+            if(e === ''){
+                Alert.alert('O nome do evento é obrigatório!')
+            }else if(data === '' ){
+                Alert.alert('A data do evento é obrigatória!')
+            }else if(moment(data, 'MM/DD/YYYY',true).isValid() == false){
+                Alert.alert('Data invalida')
+            }else if(hora_inicio === ''){
+                Alert.alert('O horário de início é obrigatório!')
+            }else if(moment(hora_inicio, 'HH:mm',true).isValid() == false){
+                Alert.alert('Hora de início inválida!')
+            }else if (hora_fim === ''){
+                Alert.alert('O horário de fim é obrigatório!')
+            }else if(moment(hora_fim, 'HH:mm',true).isValid() == false){
+                Alert.alert('Hora de fim inválida!')
+            }else if (detalhe === ''){
+                Alert.alert('Os detalhes do evento é obrigatório!')
+            }
+            else{
+                try {
+                    await api.put(`/eventos/${evento.id}`, {evento : e, data, hora_inicio, hora_fim, detalhe});
+                } catch (e) {
+                    console.error(e);
+                    Alert.alert('Não foi possível salvar!')
+                } finally {
+                    navigation.navigate('Eventos');
+                }
+            }
+            navigation.navigate('Eventos');
+        } else {
+            await api.post('/eventos', {evento : e, data, hora_inicio, hora_fim, detalhe});
             navigation.navigate('Eventos');
         }
-    }
-
-    // async function handleSave(){
-    //     try{
-    //         const completeEvent = {
-    //             id : 'string',
-    //             eventName,
-    //             eventDate,
-    //             eventStart,
-    //             eventEnd,
-    //             eventDescription,
-    //             eventImg
-    //         };
-    //         const resposta = await api.post('/eventos', completeEvent);
-    //         console.log(resposta.data);
-    //         navigation.navigate('Eventos');
-    //     }catch(error){
-    //         console.log(error);
-    //         Alert.alert('Não foi possível salvar!')
-    //     }
-    // }
-
+     }
+        
     return (
-        <Container>
-            <Header>
-                <TextHeader>Cadastrar / Alterar Evento</TextHeader>
-            </Header>
+        
+        <TouchableWithoutFeedback
+            onPress={Keyboard.dismiss}
+        >
+            <Container>
+                <Header>
+                    <TextHeader>Cadastrar / Alterar Evento</TextHeader>
+                </Header>
 
-            <Text>Evento</Text>
-            <Input 
-                onChangeText={handleChangeName}
-            />
+                <Text>Evento</Text>
+                <Input
+                    defaultValue={evento ? evento.evento : ''}
+                    onChangeText={setEvento}
+                />
 
-            <Text>Data</Text>
-            <Input 
-                keyboardType="numeric"
-                onChangeText={handleChangeDate}
-            />
-
-            <HourWrapper>
-                <Text>Hora de início</Text>
+                <Text>Data</Text>
                 <Input 
-                    style={{width: '40%'}}
-                    keyboardType="numeric"
-                    onChangeText={handleChangeStart}
+                    defaultValue={evento ? evento.data : ''}
+                    onChangeText={setData}
+                    maxLength={10}
+                    
                 />
 
-                <Text>Hora de finalização</Text>
+                <HourWrapper>
+                    <Text>Hora de início</Text>
+                    <Input 
+                        defaultValue={evento ? evento.hora_inicio : ''}
+                        style={{width: '40%'}}
+                        onChangeText={setHora_Inicio}
+                        maxLength={5}
+                    />
+
+                    <Text>Hora de finalização</Text>
+                    <Input 
+                        defaultValue={evento ? evento.hora_fim : ''}
+                        style={{width: '40%'}}
+                        onChangeText={setHora_Fim}
+                        maxLength={5}
+                    />
+                </HourWrapper>
+
+                <Text>Descrição</Text>
                 <Input 
-                    style={{width: '40%'}}
-                    keyboardType="numeric"
-                    onChangeText={handleChangeEnd}
+                    defaultValue={evento ? evento.detalhe : ''}
+                    style={{height: '15%'}}
+                    onChangeText={setDetalhe}
                 />
-            </HourWrapper>
+                <Text>Imagem de divulgação</Text>
 
-            <Text>Descrição</Text>
-            <Input 
-                style={{height: '15%'}}
-                onChangeText={handleChangeDescription}
-            />
-            <Text>Imagem de divulgação</Text>
-
-            <ButtonWrapper>
-                <Button 
-                title='SALVAR'
-                type='salvarConfirmar'
-                onPress={handleSave}
-                />
-            </ButtonWrapper>
-        </Container>
+                <ButtonWrapper>
+                    <Button 
+                    title='SALVAR'
+                    type='salvarConfirmar'
+                    onPress={handleSave}
+                    />
+                </ButtonWrapper>
+            </Container>
+        </TouchableWithoutFeedback>
     );
 }

@@ -27,7 +27,6 @@ export function Dashboard(){
 
     const navigation = useNavigation<any>();
 
-//    useEffect(() =>{
         async function fetchEvents(){
             try{
                 const resposta = await api.get('/eventos');
@@ -36,8 +35,7 @@ export function Dashboard(){
                 console.log(error);
             }
         }
-     //   fetchEvents();
-    //},[]);
+
 
      useEffect(() =>{
          fetchEvents();
@@ -47,7 +45,7 @@ export function Dashboard(){
          fetchEvents();
      },[]));
 
-    //passa pra rota o evento //ok
+    //passa pra rota o evento 
     function handleEventDetails(evento : EventDTO ){ 
         navigation.navigate('Detalhes', { evento });
     }
@@ -59,7 +57,7 @@ export function Dashboard(){
             </Header>
 
             <Input 
-            placeholder='procurar um input de pesquisa'
+            placeholder='Digite para procurar...'
             />
             <ScrollView
             >

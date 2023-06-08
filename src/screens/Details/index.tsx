@@ -21,17 +21,16 @@ import {
 import { Button } from '../../components/Button';
 import { EventDTO } from '../../dtos/EventDTO';
 import { api } from '../../services/api';
+
  interface Params{
       evento : EventDTO;
   }
 
 export function Details(){
-     const [ modalVisible, setModalVisible ] = useState(false);//ok
+     const [ modalVisible, setModalVisible ] = useState(false);
     
   const route = useRoute();
   const { evento } = route.params as Params || {}; 
-    //  const [ evento, setEvento ] = useState([]);
-    // console.log(selectedEvent);
 
  const navigation = useNavigation<any>();
 
@@ -43,14 +42,14 @@ export function Details(){
          setModalVisible(false);
      };
 
-    // //manda o evento pra editar
- function handleEdit(){
-     navigation.navigate('Novo');
- }
+    //manda o evento pra editar
+    async function handleEdit(evento : EventDTO){
+        navigation.navigate('Novo', { evento });
+    }
 
-    async function handleConfirmRemove(id){
+    async function handleConfirmRemove(){
         try{
-            await api.delete(`/eventos/${id}`);
+            await api.delete(`/eventos/${evento.id}`);
             setModalVisible(false);
         }catch(error){
             console.log(error);
@@ -88,7 +87,7 @@ export function Details(){
                                     <Button 
                                     title='Confirmar'
                                     type='salvarConfirmar'
-                                    onPress={() => handleConfirmRemove(evento.id)}
+                                    onPress={() => handleConfirmRemove()}
                                     />
 
                                     <Button 
@@ -128,7 +127,7 @@ export function Details(){
                 <Button
                 title='EDITAR'
                 type='editar'
-                onPress={handleEdit} 
+                onPress={() => handleEdit(evento)} 
                 />
 
                 <Button 

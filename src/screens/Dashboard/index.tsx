@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ScrollView, TouchableOpacity } from 'react-native';
+import { FlatList, ScrollView, TouchableOpacity } from 'react-native';
 import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 
 import { 
@@ -25,8 +25,8 @@ import { EventDTO } from '../../dtos/EventDTO'
 
 export function Dashboard(){
     const [ evento, setEvento ] = useState<EventDTO[]>([]);
-    const [eventosFiltrados, setEventosFiltrados] = useState<EventDTO[]>([]); // Estado para armazenar a lista de eventos filtrados
-    const [palavraPesquisa, setPalavraPesquisa] = useState(""); //Estado para armazenar o termo de pesquisa
+    const [ eventosFiltrados, setEventosFiltrados ] = useState<EventDTO[]>([]); // Estado para armazenar a lista de eventos filtrados
+    const [ palavraPesquisa, setPalavraPesquisa ] = useState(""); //Estado para armazenar o termo de pesquisa
 
     const navigation = useNavigation<any>();
 
@@ -39,21 +39,28 @@ export function Dashboard(){
             }
         }
 
-        // const filtrarEventos = useCallback(() => {
-        //     const palavra = palavraPesquisa.toLowerCase();
-        //     const eventosFiltrados = evento.filter((event) => {
-        //       const { evento, data } = event;
-        //       return (
-        //         (evento && evento.toLowerCase().includes(palavra)) ||
-        //         (data && data.includes(palavra))
-        //       );
-        //     });
-        //     setEventosFiltrados(eventosFiltrados);
-        //   }, [palavraPesquisa, evento]);
+        const filtrarEventos = useCallback(() => {
+            let eventosFiltrados;
+            const palavra = palavraPesquisa.toLowerCase();
+            if(palavra === ''){
+                setEventosFiltrados(evento)
+            }else{
+                eventosFiltrados = evento.filter((event) => {
+                    const { evento, data } = event;
+                    return (
+                      (evento && evento.toLowerCase().includes(palavra)) ||
+                      (data && data.includes(palavra))
+                    );
+                  });
+                  console.log(eventosFiltrados)
+                  setEventosFiltrados(eventosFiltrados);
+            }
+          }, [palavraPesquisa]);
 
      useEffect(() =>{
-         fetchEvents();
-     },[]);
+        // fetchEvents();
+         filtrarEventos();
+     },[filtrarEventos]);
 
      useFocusEffect(useCallback(()=> {
          fetchEvents();
@@ -77,14 +84,14 @@ export function Dashboard(){
 
             <ScrollView
             >
-            {
-                evento.map((evento) => (
+            <FlatList data={eventosFiltrados} renderItem={({item})=>
+            
                 <TouchableOpacity
-                onPress={() => handleEventDetails(evento)}
+                onPress={() => handleEventDetails(item)}
                 >
                 
                 <EventWrapper 
-                    key={evento.id}
+                    key={item.id}
                 >
                     <Img>
                         <Text>Imagem</Text>
@@ -93,31 +100,30 @@ export function Dashboard(){
                     <EventContentWrapper>
 
                         <EventName>
-                            <Text>{evento.evento}</Text>
+                            <Text>{item.evento}</Text>
                         </EventName>
 
                         <DHWrapper>
 
                             <EventDate> 
-                                <Text>{evento.data}</Text>
+                                <Text>{item.data}</Text>
                             </EventDate>
 
                             <EventStartHour>
-                                <Text>{evento.hora_inicio}</Text>
+                                <Text>{item.hora_inicio}</Text>
                             </EventStartHour>
 
                         </DHWrapper>
 
                         <EventDetails>
-                            <Text>{evento.detalhe}</Text>
+                            <Text>{item.detalhe}</Text>
                         </EventDetails>
 
                     </EventContentWrapper>
 
                 </EventWrapper>
-                </TouchableOpacity>
-                ))
-            }
+                </TouchableOpacity>}/>
+                
 
             </ScrollView>
         </Container>

@@ -7,7 +7,7 @@
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web",
-    "api": "json-server ./src/services/db.json --host 192.168.200.124 --port 3333 --delay 700"
+    "api": "json-server ./src/services/db.json --host 172.18.0.128 --port 3333 --delay 700"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.1.0",

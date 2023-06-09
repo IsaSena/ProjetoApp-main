@@ -14,7 +14,8 @@ import {
     DHWrapper,
     EventDate,
     EventStartHour,
-    EventDetails
+    EventDetails,
+//    Lista
 } from './styles';
 
 import { Input } from '../../components/Input';
@@ -24,6 +25,8 @@ import { EventDTO } from '../../dtos/EventDTO'
 
 export function Dashboard(){
     const [ evento, setEvento ] = useState<EventDTO[]>([]);
+    const [eventosFiltrados, setEventosFiltrados] = useState<EventDTO[]>([]); // Estado para armazenar a lista de eventos filtrados
+    const [palavraPesquisa, setPalavraPesquisa] = useState(""); //Estado para armazenar o termo de pesquisa
 
     const navigation = useNavigation<any>();
 
@@ -36,6 +39,17 @@ export function Dashboard(){
             }
         }
 
+        // const filtrarEventos = useCallback(() => {
+        //     const palavra = palavraPesquisa.toLowerCase();
+        //     const eventosFiltrados = evento.filter((event) => {
+        //       const { evento, data } = event;
+        //       return (
+        //         (evento && evento.toLowerCase().includes(palavra)) ||
+        //         (data && data.includes(palavra))
+        //       );
+        //     });
+        //     setEventosFiltrados(eventosFiltrados);
+        //   }, [palavraPesquisa, evento]);
 
      useEffect(() =>{
          fetchEvents();
@@ -58,7 +72,9 @@ export function Dashboard(){
 
             <Input 
             placeholder='Digite para procurar...'
+            onChangeText={setPalavraPesquisa}
             />
+
             <ScrollView
             >
             {

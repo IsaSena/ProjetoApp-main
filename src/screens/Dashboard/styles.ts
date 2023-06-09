@@ -1,3 +1,4 @@
+import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 
 export const Container = styled.View`
@@ -57,3 +58,11 @@ export const EventStartHour = styled.View`
 export const EventDetails = styled.View`
 
 `;
+
+// export const Lista = styled(FlatList).attrs({
+//     showVerticalScrollIndicator: true,
+//   })`
+//     width: 90%;
+//     margin-top: 40px;
+//     height: 100%;
+//   ` as React.ComponentType as new <DataListProps>() => FlatList<DataListProps>;
